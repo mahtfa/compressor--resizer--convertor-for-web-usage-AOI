@@ -11,15 +11,25 @@ Built with **Python**, using **Tkinter** for the interface and **Pillow** for im
 ## 🚀 Features
 
 ✅ Multi-tab graphical interface
+
 ✅ Batch image processing
+
 ✅ Smart format converter with **searchable dropdown**
+
 ✅ High-quality **image compression (same format → smaller size)**
+
 ✅ Flexible **image resizing by largest side**
+
 ✅ Separate output folders for each tool
+
 ✅ Real-time **log panel inside the app**
+
 ✅ Automatic **log file saving to disk**
+
 ✅ **Stop button** to safely interrupt processing
+
 ✅ No overwriting — original filenames are preserved
+
 ✅ Crash-safe design with proper exception handling
 
 ---
@@ -51,8 +61,11 @@ Convert any supported image format into another with full control.
 Reduces file size **without changing the format**:
 
 ✅ JPG → JPG
+
 ✅ PNG → PNG
+
 ✅ WEBP → WEBP
+
 ✅ and more…
 
 **User Inputs:**
@@ -104,7 +117,7 @@ Resize images by defining the **largest side length**, while keeping aspect rati
 * Automatically saved as:
 
 ```
-logs/app_log.txt
+log.txt
 ```
 
 * Includes:
@@ -130,7 +143,7 @@ At any time during processing, you can press **STOP** to:
 
 ## 🧠 Supported Formats
 
-The searchable format dropdown supports:
+The format supports:
 
 * JPG / JPEG
 * PNG
@@ -151,7 +164,7 @@ You can type directly inside the dropdown to auto-filter formats.
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/image-toolbox-gui.git
+git clone https://github.com/mahtfa/compressor--resizer--convertor-for-web-usage-AOI
 cd image-toolbox-gui
 ```
 
@@ -190,30 +203,6 @@ customtkinter
 
 ---
 
-## 📁 Project Structure
-
-```
-image-toolbox-gui/
-│
-├── main.py
-├── gui/
-│   ├── converter_tab.py
-│   ├── compressor_tab.py
-│   └── resizer_tab.py
-│
-├── logs/
-│   └── app_log.txt
-│
-├── compressed/
-├── resized/
-├── converted/
-│
-├── requirements.txt
-└── README.md
-```
-
----
-
 ## ⚠️ Common Causes of Crashes (And Fixes)
 
 | Issue                            | Solution                       |
@@ -227,12 +216,8 @@ image-toolbox-gui/
 
 ## 🗺️ Roadmap (Future Plans)
 
-* [ ] Drag & drop support
-* [ ] GPU acceleration
-* [ ] EXIF data cleaner
 * [ ] Watermark tool
 * [ ] Auto-naming templates
-* [ ] Portable EXE build
 
 ---
 
