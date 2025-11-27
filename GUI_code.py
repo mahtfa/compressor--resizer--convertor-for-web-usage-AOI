@@ -8,6 +8,8 @@ from datetime import datetime
 SUPPORTED_FORMATS = ["jpg", "jpeg", "png", "bmp", "webp", "tiff", "gif"]
 IMAGE_EXTENSIONS = tuple(f".{f}" for f in SUPPORTED_FORMATS)
 LOG_FILE = "log.txt"
+STOP_FLAG = False   # Global stop flag
+
 
 # ================= LOG SYSTEM =================
 def write_log(message):
@@ -19,10 +21,19 @@ def write_log(message):
 
 
 def log_start(title):
+    global STOP_FLAG
+    STOP_FLAG = False
     line = "=" * 50
     write_log(f"\n{line}")
     write_log(f"{title} | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     write_log(f"{line}")
+
+
+def stop_process():
+    global STOP_FLAG
+    STOP_FLAG = True
+    write_log("🛑 PROCESS STOPPED BY USER")
+
 
 # ================= BROWSE =================
 def browse_folder(entry):
@@ -30,6 +41,7 @@ def browse_folder(entry):
     if folder:
         entry.delete(0, tk.END)
         entry.insert(0, folder)
+
 
 # ================= RESIZE =================
 def resize_images():
@@ -51,6 +63,9 @@ def resize_images():
     log_start("RESIZE STARTED")
 
     for file in os.listdir(input_folder):
+        if STOP_FLAG:
+            return
+
         if file.lower().endswith(IMAGE_EXTENSIONS):
             try:
                 path = os.path.join(input_folder, file)
@@ -75,6 +90,7 @@ def resize_images():
 
     write_log("✅ RESIZE FINISHED\n")
 
+
 # ================= COMPRESS =================
 def compress_images():
     input_folder = compress_input.get()
@@ -95,6 +111,9 @@ def compress_images():
     log_start("COMPRESS STARTED")
 
     for file in os.listdir(input_folder):
+        if STOP_FLAG:
+            return
+
         if file.lower().endswith(IMAGE_EXTENSIONS):
             try:
                 path = os.path.join(input_folder, file)
@@ -113,7 +132,8 @@ def compress_images():
 
     write_log("✅ COMPRESS FINISHED\n")
 
-# ================= CONVERT (FIXED + SAFE) =================
+
+# ================= CONVERT =================
 def convert_images():
     input_folder = convert_input.get()
     output_folder = convert_output.get()
@@ -131,6 +151,9 @@ def convert_images():
     log_start("CONVERT STARTED")
 
     for file in os.listdir(input_folder):
+        if STOP_FLAG:
+            return
+
         if file.lower().endswith(IMAGE_EXTENSIONS):
             try:
                 path = os.path.join(input_folder, file)
@@ -150,80 +173,83 @@ def convert_images():
 
     write_log("✅ CONVERT FINISHED\n")
 
+
 # ================= GUI =================
 app = tk.Tk()
 app.title("Image Studio Pro")
-app.geometry("900x550")
-app.resizable(False, False)
+app.geometry("900x600")
 
 tabs = ttk.Notebook(app)
 tabs.pack(fill="both", expand=True)
 
-# ================= RESIZE TAB =================
+# ---------------- RESIZE TAB ----------------
 resize_tab = ttk.Frame(tabs)
 tabs.add(resize_tab, text="Resize")
 
-ttk.Label(resize_tab, text="Input Folder").grid(row=0, column=0, padx=10, pady=5)
+ttk.Label(resize_tab, text="Input Folder").grid(row=0, column=0)
 resize_input = ttk.Entry(resize_tab, width=55)
 resize_input.grid(row=0, column=1)
 ttk.Button(resize_tab, text="Browse", command=lambda: browse_folder(resize_input)).grid(row=0, column=2)
 
-ttk.Label(resize_tab, text="Output Folder").grid(row=1, column=0, padx=10, pady=5)
+ttk.Label(resize_tab, text="Output Folder").grid(row=1, column=0)
 resize_output = ttk.Entry(resize_tab, width=55)
 resize_output.grid(row=1, column=1)
 ttk.Button(resize_tab, text="Browse", command=lambda: browse_folder(resize_output)).grid(row=1, column=2)
 
-ttk.Label(resize_tab, text="Max Side (Longest Edge in px)").grid(row=2, column=0, padx=10, pady=5)
+ttk.Label(resize_tab, text="Max Side (Longest Edge in px)").grid(row=2, column=0)
 resize_size = ttk.Entry(resize_tab)
 resize_size.insert(0, "1000")
 resize_size.grid(row=2, column=1, sticky="w")
 
-ttk.Button(resize_tab, text="Start Resize", command=resize_images).grid(row=3, column=1, pady=10)
+ttk.Button(resize_tab, text="Start Resize", command=resize_images).grid(row=3, column=1, pady=8)
 
-# ================= COMPRESS TAB =================
+# ---------------- COMPRESS TAB ----------------
 compress_tab = ttk.Frame(tabs)
 tabs.add(compress_tab, text="Compress")
 
-ttk.Label(compress_tab, text="Input Folder").grid(row=0, column=0, padx=10, pady=5)
+ttk.Label(compress_tab, text="Input Folder").grid(row=0, column=0)
 compress_input = ttk.Entry(compress_tab, width=55)
 compress_input.grid(row=0, column=1)
 ttk.Button(compress_tab, text="Browse", command=lambda: browse_folder(compress_input)).grid(row=0, column=2)
 
-ttk.Label(compress_tab, text="Output Folder").grid(row=1, column=0, padx=10, pady=5)
+ttk.Label(compress_tab, text="Output Folder").grid(row=1, column=0)
 compress_output = ttk.Entry(compress_tab, width=55)
 compress_output.grid(row=1, column=1)
 ttk.Button(compress_tab, text="Browse", command=lambda: browse_folder(compress_output)).grid(row=1, column=2)
 
-ttk.Label(compress_tab, text="Quality (1 - 100)").grid(row=2, column=0, padx=10, pady=5)
+ttk.Label(compress_tab, text="Quality (1 - 100)").grid(row=2, column=0)
 compress_quality = ttk.Entry(compress_tab)
 compress_quality.insert(0, "80")
 compress_quality.grid(row=2, column=1, sticky="w")
 
-ttk.Button(compress_tab, text="Start Compress", command=compress_images).grid(row=3, column=1, pady=10)
+ttk.Button(compress_tab, text="Start Compress", command=compress_images).grid(row=3, column=1, pady=8)
 
-# ================= CONVERT TAB =================
+# ---------------- CONVERT TAB ----------------
 convert_tab = ttk.Frame(tabs)
 tabs.add(convert_tab, text="Convert")
 
-ttk.Label(convert_tab, text="Input Folder").grid(row=0, column=0, padx=10, pady=5)
+ttk.Label(convert_tab, text="Input Folder").grid(row=0, column=0)
 convert_input = ttk.Entry(convert_tab, width=55)
 convert_input.grid(row=0, column=1)
 ttk.Button(convert_tab, text="Browse", command=lambda: browse_folder(convert_input)).grid(row=0, column=2)
 
-ttk.Label(convert_tab, text="Output Folder").grid(row=1, column=0, padx=10, pady=5)
+ttk.Label(convert_tab, text="Output Folder").grid(row=1, column=0)
 convert_output = ttk.Entry(convert_tab, width=55)
 convert_output.grid(row=1, column=1)
 ttk.Button(convert_tab, text="Browse", command=lambda: browse_folder(convert_output)).grid(row=1, column=2)
 
-ttk.Label(convert_tab, text="Target Format").grid(row=2, column=0, padx=10, pady=5)
-
+ttk.Label(convert_tab, text="Target Format").grid(row=2, column=0)
 convert_format = ttk.Combobox(convert_tab, values=SUPPORTED_FORMATS)
 convert_format.set("webp")
 convert_format.grid(row=2, column=1, sticky="w")
 
-ttk.Button(convert_tab, text="Start Convert", command=convert_images).grid(row=3, column=1, pady=10)
+ttk.Button(convert_tab, text="Start Convert", command=convert_images).grid(row=3, column=1, pady=8)
 
-# ================= LOG PANEL =================
+# ---------------- STOP BUTTON ----------------
+stop_btn = ttk.Button(app, text="STOP", command=stop_process)
+stop_btn.pack(pady=5)
+
+# ---------------- LOG PANEL ----------------
 log_frame = ttk.LabelFrame(app, text="Process Log")
 log_frame.pack(fill="both", expand=True, padx=10, pady=8)
 
@@ -231,5 +257,4 @@ log_box = tk.Text(log_frame, height=10)
 log_box.pack(fill="both", expand=True)
 
 write_log("✅ Image Studio Pro Ready...")
-
 app.mainloop()
